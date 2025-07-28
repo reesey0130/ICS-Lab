@@ -83,14 +83,14 @@ set DATA 0
 run
 ```
 
-> ✅ Output:
+## Output:
 ```
 10.0.0.200:5020 - Value 0 successfully written at coil address 1
 ```
 
 ---
 
-## 📜 Sample Output
+## Sample Output
 
 ![Successful write coil](screenshots/Changed%20Coil%20Value%20in%20PLC.png)
 
@@ -125,7 +125,36 @@ This lab is purely for educational and research purposes in a closed, controlled
 
 ---
 
-## Next Steps
+# Key Takeways
+This lab simulated a cyberattack on an ICS network in a controlled environment. The goal was to replicate a scenario where an attacker utilizes open source intelligence (OSINT) to perform reconnaisance, pivot into an isolated ICS network, and manipulate values that affect the functions of a PLC through the Modbus Protocol. 
+The exploit used allowed me to read/write coils (or single-bit memory locations). These coils represent on/off states of digital outputs, such as switches, motors, or alarms. 1 = on, 0 = off. 
+
+set ACTION WRITE_COIL 
+set DATA_ADDRESS 1 
+set DATA 0
+run
+
+This series of commands in the msfconsole exploit being used allowed me to write new data to the coil within memory address 1, changing it's status to 0, or off. This remotely disabled the device, and in the real world could have amounted to turning off a fan, pump, valve, circuit breaker, or sensor of any type. 
+
+Modbus protocol offers no authentication/encryption, therefore any level of network access can send these commands. 
+
+# real world examples with this exploit
+## 1) Disabling Safety Systems
+   set coil controlling emergency stop to off, preventing automatic shutoff in case of dangerous conditions
+
+## 2) Overflowing Tanks
+   Set coil value attributed to opening a valve to on permenantly, causing tanks to overflow, leading to flooding, contamination, or material shortages
+
+## 3) Damaging Machinery
+   Toggle coil controlling motor stop/start in rapid succession at a manufacturing plant, causing mechanical stress, overheating, or damage to motors. 
+
+## 4) Blacking out substation
+   Set coil to open a circuit breaker at power grid substation, cutting off power to an entire section of a grid. 
+
+## 5) Halting production for ransom
+   Disable key actuators such as robot arms, mixers, and presses to force downtime until ransom is paid
+
+# Next Steps
 
 - Simulate unauthorized sensor manipulation
 - Add logging and alerting via Conpot
