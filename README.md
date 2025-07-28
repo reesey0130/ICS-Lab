@@ -1,12 +1,12 @@
-# 🛠 ICS Honeypot Attack Lab: Modbus Exploitation via Conpot
+# ICS Honeypot Attack Lab: Modbus Exploitation via Conpot
 
 This lab simulates a real-world ICS attack scenario by pivoting through a compromised Windows jump box and exploiting an industrial honeypot (Conpot) using Modbus protocol commands. The target runs on a segregated ICS subnet.
 
 ---
 
-## 🧱 Lab Setup
+## Lab Setup
 
-### 🔐 Network Structure
+### Network Structure
 
 ```
 Kali (Attacker)
@@ -15,7 +15,7 @@ Kali (Attacker)
            ↳ Conpot Modbus Honeypot (10.0.0.200:5020)
 ```
 
-### 🧪 Tools Used
+### Tools Used
 
 | Tool              | Purpose                       |
 |------------------|-------------------------------|
@@ -26,16 +26,16 @@ Kali (Attacker)
 
 ---
 
-## 🔍 Reconnaissance
+## Reconnaissance
 
-### 🎯 Target Identified via `ps aux`
+### Target Identified via `ps aux`
 Conpot is confirmed running on the honeypot with the Modbus template:
 
 ```bash
 ps aux | grep conpot
 ```
 
-### 🔍 Modbus Template Location
+### Modbus Template Location
 
 ```bash
 find ~/conpot-env -name modbus.xml
@@ -48,17 +48,17 @@ Located at:
 
 ---
 
-## 🔁 Pivot: Route Through Meterpreter
+## Pivot: Route Through Meterpreter
 
 ```bash
 meterpreter > run autoroute -s 10.0.0.0/24
 ```
 
-> ✅ Adds a route from the jump box to the ICS subnet via `192.168.1.150`
+> Adds a route from the jump box to the ICS subnet via `192.168.1.150`
 
 ---
 
-## 🧨 Exploitation with `modbusclient`
+## Exploitation with `modbusclient`
 
 ### 1. **Read Coil Values**
 
@@ -70,7 +70,7 @@ set ACTION READ_COILS
 run
 ```
 
-> ✔ Successfully read coil address 1
+> Successfully read coil address 1
 
 ---
 
@@ -92,11 +92,11 @@ run
 
 ## 📜 Sample Output
 
-![Successful write coil](path/to/your/screenshot.png)
+![Successful write coil](screenshots/Changed%20Coil%20Value%20in%20PLC.png)
 
 ---
 
-## 📖 Analysis of `modbus.xml`
+## Analysis of `modbus.xml`
 
 Extracted coil and register addresses from the honeypot XML:
 
@@ -108,7 +108,7 @@ Extracted coil and register addresses from the honeypot XML:
 
 ---
 
-## 📌 Summary
+## Summary
 
 | Phase              | Result                   |
 |-------------------|--------------------------|
@@ -119,13 +119,13 @@ Extracted coil and register addresses from the honeypot XML:
 
 ---
 
-## 🔐 Ethical Notice
+## Ethical Notice
 
 This lab is purely for educational and research purposes in a closed, controlled environment. No real systems were accessed.
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 - Simulate unauthorized sensor manipulation
 - Add logging and alerting via Conpot
